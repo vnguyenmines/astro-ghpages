@@ -20,13 +20,22 @@ jobs:
     steps:
       - name: Checkout your repository using git
         uses: actions/checkout@v4
-      - name: Install, build, and upload your site
-        uses: withastro/action@v3
-        # with:
-          # path: . # The root location of your Astro project inside the repository. (optional)
-          # node-version: 20 # The specific version of Node that should be used to build your site. Defaults to 20. (optional)
-          # package-manager: pnpm@latest # The Node package manager that should be used to install dependencies and build your site. Automatically detected based on your lockfile. (optional)
-
+      - name: Init Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.12.0"
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          static_site_generator: next
+      - name: NPM Install
+        run: npm ci
+      - name: NPM Build
+        run: npm run build
+      - name: Upload artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
   deploy:
     needs: build
     runs-on: ubuntu-latest
